@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://localhost:1433;database=taskdb;trustServerCertificate=true
+    username: dbu_jenkins
+    password: dbu_jenkins
+  application:
+    name: task_crud
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  amqp:
+    deserialization:
+      trust:
+        all

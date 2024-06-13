@@ -1,0 +1,10 @@
+W pustyni i puszczy|673428|1|1|
+Lalka|673304|2|2|
+Dzieci z Bulerbyn|673835|3|3|
+Nudna książka|673234|4|1|
+Ciekawa księżka|673098|5|2|
+Misie polarne|673526|6|3|
+Angielski|673124|7|1|
+Matematyka|673777|8|2|
+Budowa komputer|673336|9|3|
+Ciekawostki|673989|10|1
