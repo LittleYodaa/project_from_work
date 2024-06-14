@@ -13,44 +13,29 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class FtpDirectory {
+    private final FtpConfiguration ftpConfiguration;
+
+    public FtpDirectory(FtpConfiguration ftpConfiguration) {
+        this.ftpConfiguration = ftpConfiguration;
+    }
+
     public void createDirectory(String directory) {
-        String serverAddress = "ftp://localhost:21";
-        String username = "admin";
-        String password = "mypass";
-
-        FileSystemManager fsManager = null;
         FileObject remoteDirObject = null;
-        FileSystemOptions opts = new FileSystemOptions();
-
         try {
-            fsManager = VFS.getManager();
+            remoteDirObject = ftpConfiguration.getRemoteFileObject(directory);
 
-            StaticUserAuthenticator auth = new StaticUserAuthenticator(null, username, password);
-            DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
-            FtpFileSystemConfigBuilder.getInstance().setPassiveMode(opts, true);
-
-            log.info("Próba połączenia z serwerem FTP: " + serverAddress);
-
-            remoteDirObject = fsManager.resolveFile(serverAddress + directory, opts);
-
-            log.info("Typ pliku: " + remoteDirObject.getType());
+            log.info("File type: " + remoteDirObject.getType());
 
             if (!remoteDirObject.exists()) {
                 remoteDirObject.createFolder();
-                log.info("Katalog utworzony pomyślnie: " + directory);
+                log.info("Directory created: " + directory);
             } else {
-                log.info("Katalog już istnieje: " + directory);
+                log.info("Directory already exist: " + directory);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (remoteDirObject != null) {
-                try {
-                    remoteDirObject.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            ftpConfiguration.closeFileObject(remoteDirObject);
         }
     }
 }

@@ -2,57 +2,40 @@ package pl.programisci.task_crud.ftp;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.vfs2.*;
-import org.apache.commons.vfs2.auth.StaticUserAuthenticator;
-import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
-import org.apache.commons.vfs2.provider.ftp.FtpFileSystemConfigBuilder;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 
 @Slf4j
 @Service
 @EnableScheduling
 public class FtpFile {
+    private final static String REMOTE_INPUT_DIRECTORY = "/input";
+    private final static String REMOTE_ARCHIVE_DIRECTORY = "/archive";
+    private final static String REMOTE_FILE = "/book.txt";
+    private final static String LOCAL_FILE_PATH = "C:\\Users\\patryk.kawula\\IdeaProjects\\task_crud\\temporary";
 
-    String serverAddress = "ftp://localhost:21";
-    String username = "admin";
-    String password = "mypass";
-    String remoteInputDir = "/input";
-    String remoteArchiveDir = "/archive";
-    String remoteFile = "/book.txt";
-    String localFilePath = "C:\\Users\\patryk.kawula\\IdeaProjects\\task_crud\\temporary";
+    private final FtpConfiguration ftpConfiguration;
 
+    public FtpFile(FtpConfiguration ftpConfiguration) {
+        this.ftpConfiguration = ftpConfiguration;
+    }
 
     @Scheduled(cron = "0 * * * * *")
     private boolean checkFileExist() {
-        FileSystemManager fsManager = null;
         FileObject fileObject = null;
-        FileSystemOptions opts = new FileSystemOptions();
-
         try {
-            fsManager = VFS.getManager();
-
-            StaticUserAuthenticator auth = new StaticUserAuthenticator(null, username, password);
-            DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
-            FtpFileSystemConfigBuilder.getInstance().setPassiveMode(opts, true);
-
-
-            fileObject = fsManager.resolveFile(serverAddress + remoteInputDir + remoteFile, opts);
-
-            log.info("Typ pliku: " + fileObject.getType());
-
+            fileObject = ftpConfiguration.getRemoteFileObject(REMOTE_INPUT_DIRECTORY + REMOTE_FILE);
             if (!fileObject.exists()) {
-                log.info("Plik nie istnieje : " + remoteFile);
+                log.info("File not exist : " + REMOTE_FILE);
                 return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        log.info("Plik istnieje : " + remoteFile);
+        log.info("File already exist : " + REMOTE_FILE);
         return true;
     }
 
@@ -60,82 +43,31 @@ public class FtpFile {
         FileSystemManager fsManager = null;
         FileObject remoteFileToDownload = null;
         FileObject localFile = null;
-        FileSystemOptions opts = new FileSystemOptions();
-        PrintWriter printWriter = null;
-        OutputStream outputStream = null;
-
         try {
-            fsManager = VFS.getManager();
-
-            StaticUserAuthenticator auth = new StaticUserAuthenticator(null, username, password);
-            DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
-            FtpFileSystemConfigBuilder.getInstance().setPassiveMode(opts, true);
-
-            remoteFileToDownload = fsManager.resolveFile(serverAddress + remoteInputDir + remoteFile, opts);
-//            outputStream = remoteFileToDownload.getContent().getOutputStream(true);
-//            printWriter = new PrintWriter(outputStream);
-
-            localFile = fsManager.resolveFile(new File(localFilePath).getAbsolutePath());
-            localFile.copyFrom(remoteFileToDownload, Selectors.SELECT_SELF);
+            FileObject remoteFileObject = ftpConfiguration.getRemoteFileObject(REMOTE_INPUT_DIRECTORY + REMOTE_FILE);
+            localFile = ftpConfiguration.getLocalFileObject(new File(LOCAL_FILE_PATH).getAbsolutePath());
+            localFile.copyFrom(remoteFileObject, Selectors.SELECT_SELF);
             log.info("Copy file from FTP to local directory");
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (remoteFileToDownload != null) {
-                try {
-                    remoteFileToDownload.close();
-                } catch (FileSystemException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (localFile != null) {
-                try {
-                    localFile.close();
-                } catch (FileSystemException e) {
-                    e.printStackTrace();
-                }
-            }
+            ftpConfiguration.closeFileObject(remoteFileToDownload);
         }
+        ftpConfiguration.closeFileObject(localFile);
     }
 
     public void moveFileToArchiveDirectroy() {
-        FileSystemManager fsManager = null;
         FileObject remoteFileToDownload = null;
-        FileObject localFile = null;
-        FileSystemOptions opts = new FileSystemOptions();
-
         try {
-            fsManager = VFS.getManager();
-
-            StaticUserAuthenticator auth = new StaticUserAuthenticator(null, username, password);
-            DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
-            FtpFileSystemConfigBuilder.getInstance().setPassiveMode(opts, true);
-
-
-            remoteFileToDownload = fsManager.resolveFile(serverAddress + remoteInputDir + remoteFile, opts);
-
+            remoteFileToDownload = ftpConfiguration.getRemoteFileObject(REMOTE_INPUT_DIRECTORY + REMOTE_FILE);
             if (remoteFileToDownload.exists()) {
-                remoteFileToDownload.moveTo(fsManager.resolveFile(serverAddress + remoteArchiveDir + remoteFile, opts));
+                remoteFileToDownload.moveTo(ftpConfiguration.getRemoteFileObject(REMOTE_ARCHIVE_DIRECTORY + REMOTE_FILE));
                 log.info("Move file from /input to /archive directory on FTP server");
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (remoteFileToDownload != null) {
-                try {
-                    remoteFileToDownload.close();
-                } catch (FileSystemException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (localFile != null) {
-                try {
-                    localFile.close();
-                } catch (FileSystemException e) {
-                    e.printStackTrace();
-                }
-            }
+            ftpConfiguration.closeFileObject(remoteFileToDownload);
         }
     }
 }
