@@ -35,12 +35,6 @@ public class GenreController {
         return ResponseEntity.ok().build();
     }
 
-//    @PostMapping("/addByRabbit")
-//    ResponseEntity<?> addGenreByRabbit(@RequestBody SaveGenreDto genreDto) {
-//        brokerSender.send(genreDto);
-//        return ResponseEntity.ok().build();
-//    }
-
     @PostMapping
     ResponseEntity<?> addGenre(@RequestBody SaveGenreDto saveGenreDto) {
         genreService.addGenre(saveGenreDto);

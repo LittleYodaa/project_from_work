@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import pl.programisci.task_crud.dto.FullBookDto;
 import pl.programisci.task_crud.dto.mapper.BookDtoMapper;
 import pl.programisci.task_crud.file.reader.BookFileReader;
+import pl.programisci.task_crud.file.reader.FtpFileReader;
 import pl.programisci.task_crud.model.Book;
 import pl.programisci.task_crud.repository.BookDao;
 
@@ -24,12 +25,14 @@ public class BookService {
     private final JdbcTemplate jdbcTemplate;
     private final BookFileReader bookFileReader;
     private final BookDtoMapper bookDtoMapper;
+    private final FtpFileReader ftpFileReader;
 
-    public BookService(BookDao bookDao, JdbcTemplate jdbcTemplate, BookFileReader bookFileReader, BookDtoMapper bookDtoMapper) {
+    public BookService(BookDao bookDao, JdbcTemplate jdbcTemplate, BookFileReader bookFileReader, BookDtoMapper bookDtoMapper, FtpFileReader ftpFileReader) {
         this.bookDao = bookDao;
         this.jdbcTemplate = jdbcTemplate;
         this.bookFileReader = bookFileReader;
         this.bookDtoMapper = bookDtoMapper;
+        this.ftpFileReader = ftpFileReader;
     }
 
     private SimpleJdbcCall getSimpleJdbcTemplate() {
@@ -46,6 +49,11 @@ public class BookService {
 
     public void fillTableWithBook() {
         List<Book> books = bookFileReader.readFile();
+        bookDao.fillBookTabel(books);
+    }
+
+    public void fillTableWithBookFromFtpFile() {
+        List<Book> books = ftpFileReader.readFile();
         bookDao.fillBookTabel(books);
     }
 

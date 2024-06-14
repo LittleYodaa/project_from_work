@@ -1,5 +1,6 @@
 package pl.programisci.task_crud.ftp;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileSystemOptions;
@@ -9,6 +10,7 @@ import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
 import org.apache.commons.vfs2.provider.ftp.FtpFileSystemConfigBuilder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class FtpDirectory {
     public void createDirectory(String directory) {
@@ -27,17 +29,17 @@ public class FtpDirectory {
             DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
             FtpFileSystemConfigBuilder.getInstance().setPassiveMode(opts, true);
 
-            System.out.println("Próba połączenia z serwerem FTP: " + serverAddress);
+            log.info("Próba połączenia z serwerem FTP: " + serverAddress);
 
             remoteDirObject = fsManager.resolveFile(serverAddress + directory, opts);
 
-            System.out.println("Typ pliku: " + remoteDirObject.getType());
+            log.info("Typ pliku: " + remoteDirObject.getType());
 
             if (!remoteDirObject.exists()) {
                 remoteDirObject.createFolder();
-                System.out.println("Katalog utworzony pomyślnie: " + directory);
+                log.info("Katalog utworzony pomyślnie: " + directory);
             } else {
-                System.out.println("Katalog już istnieje: " + directory);
+                log.info("Katalog już istnieje: " + directory);
             }
         } catch (Exception e) {
             e.printStackTrace();
