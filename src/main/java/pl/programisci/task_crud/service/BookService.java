@@ -22,22 +22,17 @@ import java.util.List;
 @EnableScheduling
 public class BookService {
     private final BookDao bookDao;;
-    private final JdbcTemplate jdbcTemplate;
     private final BookFileReader bookFileReader;
     private final BookDtoMapper bookDtoMapper;
     private final FtpFileReader ftpFileReader;
 
-    public BookService(BookDao bookDao, JdbcTemplate jdbcTemplate, BookFileReader bookFileReader, BookDtoMapper bookDtoMapper, FtpFileReader ftpFileReader) {
+    public BookService(BookDao bookDao, BookFileReader bookFileReader, BookDtoMapper bookDtoMapper, FtpFileReader ftpFileReader) {
         this.bookDao = bookDao;
-        this.jdbcTemplate = jdbcTemplate;
         this.bookFileReader = bookFileReader;
         this.bookDtoMapper = bookDtoMapper;
         this.ftpFileReader = ftpFileReader;
     }
 
-    private SimpleJdbcCall getSimpleJdbcTemplate() {
-        return new SimpleJdbcCall(jdbcTemplate);
-    }
 
 //    @Scheduled(cron = "0 * * * * *")
 //    public void deleteAuthorAndBookOlderThan6Hours() {

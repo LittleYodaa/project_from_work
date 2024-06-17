@@ -1,30 +1,41 @@
 package pl.programisci.task_crud.ftp;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.vfs2.*;
 import org.apache.commons.vfs2.auth.StaticUserAuthenticator;
 import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
 import org.apache.commons.vfs2.provider.ftp.FtpFileSystemConfigBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@Setter
+@Getter
+@ConfigurationProperties(prefix = "ftp")
 public class FtpConfiguration {
-    private final static String SERVER_ADDRESS = "ftp://localhost:21";
-    private final static String USERNAME = "admin";
-    private final static String PASSWORD = "mypass";
+
+    private String server;
+    private String username;
+    private String password;
+    private String remoteInputDirectory;
+    private String remoteArchiveDirectory;
+    private String remoteFile;
+    private String localFilePath;
 
     public FileObject getRemoteFileObject(String filePath) throws FileSystemException {
         FileSystemManager fileSystemManager = fileSystemManager();
         FileSystemOptions fileSystemOptions = new FileSystemOptions();
-        StaticUserAuthenticator staticUserAuthenticator = new StaticUserAuthenticator(null, USERNAME, PASSWORD);
+        StaticUserAuthenticator staticUserAuthenticator = new StaticUserAuthenticator(null, username, password);
         DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(fileSystemOptions, staticUserAuthenticator);
         FtpFileSystemConfigBuilder.getInstance().setPassiveMode(fileSystemOptions, true);
-        return fileSystemManager.resolveFile(SERVER_ADDRESS + filePath, fileSystemOptions);
+        return fileSystemManager.resolveFile(server + filePath, fileSystemOptions);
     }
 
     public FileObject getLocalFileObject(String filePath) throws FileSystemException {
         FileSystemManager fileSystemManager = fileSystemManager();
         FileSystemOptions fileSystemOptions = new FileSystemOptions();
-        StaticUserAuthenticator staticUserAuthenticator = new StaticUserAuthenticator(null, USERNAME, PASSWORD);
+        StaticUserAuthenticator staticUserAuthenticator = new StaticUserAuthenticator(null, username, password);
         DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(fileSystemOptions, staticUserAuthenticator);
         FtpFileSystemConfigBuilder.getInstance().setPassiveMode(fileSystemOptions, true);
         return fileSystemManager.resolveFile(filePath, fileSystemOptions);
@@ -47,4 +58,5 @@ public class FtpConfiguration {
             throw new RuntimeException(e);
         }
     }
+
 }

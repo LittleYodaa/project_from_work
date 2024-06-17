@@ -2,12 +2,6 @@ package pl.programisci.task_crud.ftp;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemManager;
-import org.apache.commons.vfs2.FileSystemOptions;
-import org.apache.commons.vfs2.VFS;
-import org.apache.commons.vfs2.auth.StaticUserAuthenticator;
-import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
-import org.apache.commons.vfs2.provider.ftp.FtpFileSystemConfigBuilder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -23,6 +17,7 @@ public class FtpDirectory {
         FileObject remoteDirObject = null;
         try {
             remoteDirObject = ftpConfiguration.getRemoteFileObject(directory);
+            log.info("Creating directory: " + remoteDirObject.toString());
 
             log.info("File type: " + remoteDirObject.getType());
 

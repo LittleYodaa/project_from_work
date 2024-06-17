@@ -1,3 +1,11 @@
+ftp:
+  server: ftp://localhost:21
+  username: admin
+  password: mypass
+  remote-input-directory: /input
+  remote-archive-directory: /archive
+  remote-file: /book.txt
+  local-file-path: C:\Users\patryk.kawula\IdeaProjects\task_crud\temporary
 spring:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver

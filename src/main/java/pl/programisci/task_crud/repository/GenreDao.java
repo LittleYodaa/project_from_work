@@ -21,14 +21,16 @@ import java.util.Map;
 
 @Repository
 public class GenreDao {
-    private final JdbcTemplate jdbcTemplate;
+//    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcCall simpleJdbcCall;
 
     public GenreDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+//        this.jdbcTemplate = jdbcTemplate;
+        this.simpleJdbcCall = new SimpleJdbcCall(jdbcTemplate);
     }
 
     private SimpleJdbcCall getSimpleJdbcTemplate() {
-        return new SimpleJdbcCall(jdbcTemplate);
+        return simpleJdbcCall;
     }
 
     @SuppressWarnings("unchecked")

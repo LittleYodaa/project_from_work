@@ -31,7 +31,7 @@ public class BookController {
         ftpDirectory.createDirectory("/input");
         ftpDirectory.createDirectory("/archive");
         ftpFile.downloadFile();
-        ftpFile.moveFileToArchiveDirectroy();
+        ftpFile.moveFileToArchiveDirectory();
         bookService.fillTableWithBookFromFtpFile();
         return ResponseEntity.ok().build();
     }

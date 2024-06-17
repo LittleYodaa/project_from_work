@@ -20,6 +20,6 @@ public class FtpFileReader extends TextFileReader<Book>{
 
     @Override
     protected Path path() {
-        return Path.of("C:\\Users\\patryk.kawula\\IdeaProjects\\task_crud\\temporary");
+        return Path.of("C:/Users/patryk.kawula/IdeaProjects/task-crud/temporary");
     }
 }
