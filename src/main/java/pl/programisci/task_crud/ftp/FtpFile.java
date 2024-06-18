@@ -15,12 +15,6 @@ import java.util.concurrent.TimeUnit;
 @EnableScheduling
 public class FtpFile {
 
-
-//    private final static String REMOTE_INPUT_DIRECTORY = "/input";
-//    private final static String REMOTE_ARCHIVE_DIRECTORY = "/archive";
-//    private final static String REMOTE_FILE = "/book.txt";
-//    private final static String LOCAL_FILE_PATH = "C:\\Users\\patryk.kawula\\IdeaProjects\\task_crud\\temporary";
-
     private final FtpConfiguration ftpConfiguration;
     private final FtpDirectory ftpDirectory;
     private final BookService bookService;
@@ -32,26 +26,26 @@ public class FtpFile {
     }
 
     @Scheduled(fixedRateString = "10", timeUnit = TimeUnit.SECONDS)
-    private boolean checkFileExist() {
+    private void checkFileExist() throws FileSystemException {
         FileObject fileObject = null;
         try {
             fileObject = ftpConfiguration.getRemoteFileObject(ftpConfiguration.getRemoteInputDirectory() + ftpConfiguration.getRemoteFile());
+            fileObject.refresh();
             log.info("Checking if file exists: " + fileObject.exists() + " " + fileObject.toString());
-            if (!fileObject.exists()) {
+            if (fileObject.exists()) {
                 ftpDirectory.createDirectory("/input");
                 ftpDirectory.createDirectory("/archive");
-                log.info("File not exist : " + ftpConfiguration.getRemoteFile());
-                return false;
-            } else {
                 downloadFile();
                 moveFileToArchiveDirectory();
                 bookService.fillTableWithBookFromFtpFile();
+                log.info("File exist : " + ftpConfiguration.getRemoteFile());
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            FileSystem fileSystem = fileObject.getFileSystem();
+            VFS.getManager().closeFileSystem(fileSystem);
         }
-        log.info("File already exist : " + ftpConfiguration.getRemoteFile());
-        return true;
     }
 
     public void downloadFile() {

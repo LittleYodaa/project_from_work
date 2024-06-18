@@ -7,19 +7,19 @@ import java.nio.file.Path;
 
 @Service
 public class FtpFileReader extends TextFileReader<Book>{
-    private final FileBookMapper bookMapper;
+    private final FileBookMapper fileBookMapper;
 
     public FtpFileReader(FileBookMapper fileBookMapper) {
-        this.bookMapper = fileBookMapper;
+        this.fileBookMapper = fileBookMapper;
     }
 
     @Override
     protected Book map(String[] strings) {
-        return bookMapper.map(strings);
+        return fileBookMapper.map(strings);
     }
 
     @Override
     protected Path path() {
-        return Path.of("C:/Users/patryk.kawula/IdeaProjects/task-crud/temporary");
+        return Path.of("C:\\Users\\patryk.kawula\\IdeaProjects\\task_crud\\temporary");
     }
 }
