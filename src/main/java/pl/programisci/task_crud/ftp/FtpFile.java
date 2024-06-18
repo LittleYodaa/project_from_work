@@ -54,6 +54,11 @@ public class FtpFile {
         FileObject localFile = null;
         try {
             FileObject remoteFileObject = ftpConfiguration.getRemoteFileObject(ftpConfiguration.getRemoteInputDirectory() + ftpConfiguration.getRemoteFile());
+            localFile = ftpConfiguration.getLocalFileObject(ftpConfiguration.getLocalFilePath());
+            if (localFile.exists()) {
+                localFile.close();
+                localFile.delete();
+            }
             localFile = ftpConfiguration.getLocalFileObject(new File(ftpConfiguration.getLocalFilePath()).getAbsolutePath());
             localFile.copyFrom(remoteFileObject, Selectors.SELECT_SELF);
             log.info("Copy file from FTP to local directory");

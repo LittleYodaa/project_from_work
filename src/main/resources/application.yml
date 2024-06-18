@@ -9,7 +9,8 @@ ftp:
 spring:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://localhost:1433;database=taskdb;trustServerCertificate=true
+#    url: jdbc:sqlserver://localhost:1433;database=taskdb;trustServerCertificate=true
+    url: jdbc:sqlserver://host.docker.internal:1433;database=taskdb;trustServerCertificate=true
     username: dbu_jenkins
     password: dbu_jenkins
   application:

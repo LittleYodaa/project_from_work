@@ -9,31 +9,38 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ControllerAdvisor {
 
-    @ExceptionHandler (GenreAlreadyExistException.class)
+    @ExceptionHandler(GenreAlreadyExistException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> handle(GenreAlreadyExistException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(e.getCause().getMessage());
     }
 
-    @ExceptionHandler (GenreNotFoudException.class)
+    @ExceptionHandler(GenreNotFoudException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> handle(GenreNotFoudException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(e.getMessage());
     }
 
-    @ExceptionHandler (GenreForeignKeyReferenceException.class)
+    @ExceptionHandler(GenreForeignKeyReferenceException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<?> handle(GenreForeignKeyReferenceException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(e.getMessage());
     }
 
-    @ExceptionHandler (BookNotFoundException.class)
+    @ExceptionHandler(BookNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> handle(BookNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidBookParametersException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public ResponseEntity<?> handle(InvalidBookParametersException e) {
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
                 .body(e.getMessage());
     }
 }
