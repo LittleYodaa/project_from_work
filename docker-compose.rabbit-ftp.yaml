@@ -1,0 +1,31 @@
+version: "3.7"
+services:
+  ftp_server:
+    image: fauria/vsftpd
+    container_name: ftp_server
+    ports:
+      - "20:20"
+      - "21:21"
+      - "21100-21110:21100-21110"
+    environment:
+      - PUBLICHOST=localhost
+      - FTP_USER=admin
+      - FTP_PASS=mypass
+      - PASV_ADDRESS=127.0.0.1
+      - PASV_MIN_PORT=21100
+      - PASV_MAX_PORT=21110
+    volumes:
+      - C:\ftp-docker:/home/vsftpd
+    networks:
+      - task-crud-network
+
+  rabbit:
+    image: rabbitmq
+    container_name: rabbit
+    ports:
+      - "15572:15672"
+    networks:
+      - task-crud-network
+networks:
+  task-crud-network:
+    external: true

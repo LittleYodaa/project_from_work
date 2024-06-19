@@ -2,10 +2,11 @@ version: "3.7"
 services:
   task-crud-app:
     image: task_crud
-    container_name: task-crud
+    container_name: task-crud-app
     ports:
       - 8080:8080
     networks:
       - task-crud-network
 networks:
-  task-crud-network: {}
+  task-crud-network:
+    external: true
